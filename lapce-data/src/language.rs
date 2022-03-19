@@ -34,6 +34,7 @@ pub enum LapceLanguage {
     Rust,
     Javascript,
     Go,
+    Toml
 }
 
 impl LapceLanguage {
@@ -44,7 +45,7 @@ impl LapceLanguage {
             "js" => LapceLanguage::Javascript,
             "jsx" => LapceLanguage::Javascript,
             "go" => LapceLanguage::Go,
-            // "toml" => LapceLanguage::Toml,
+            "toml" => LapceLanguage::Toml,
             // "yaml" => LapceLanguage::Yaml,
             // "yml" => LapceLanguage::Yaml,
             _ => return None,
@@ -83,7 +84,18 @@ pub fn new_highlight_config(language: LapceLanguage) -> HighlightConfiguration {
                 "",
                 "",
             )
-            .unwrap();
+                .unwrap();
+            configuration.configure(&SCOPES);
+            configuration
+        }
+        LapceLanguage::Toml => {
+            let mut configuration = HighlightConfiguration::new(
+                tree_sitter_toml::language(),
+                tree_sitter_toml::HIGHLIGHT_QUERY,
+                "",
+                "",
+            )
+                .unwrap();
             configuration.configure(&SCOPES);
             configuration
         }
@@ -95,6 +107,7 @@ pub fn new_parser(language: LapceLanguage) -> Parser {
         LapceLanguage::Rust => tree_sitter_rust::language(),
         LapceLanguage::Javascript => tree_sitter_javascript::language(),
         LapceLanguage::Go => tree_sitter_go::language(),
+        LapceLanguage::Toml => tree_sitter_toml::language(),
     };
     let mut parser = Parser::new();
     parser.set_language(language).unwrap();

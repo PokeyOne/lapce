@@ -16,11 +16,18 @@ const GO_CODE_LENS_LIST: &[&str] = &[
 ];
 const GO_CODE_LENS_IGNORE_LIST: &[&str] =
     &["source_file", "comment", "line_comment"];
+const TOML_CODE_LENS_LIST: &[&str] = &[
+    "source_file"
+];
+const TOML_CODE_LENS_IGNORE_LIST: &[&str] = &[
+    "source_file", "comment", "line_comment"
+];
 
 #[derive(Eq, PartialEq, Hash, Copy, Clone, Debug)]
 pub enum LapceLanguage {
     Rust,
     Go,
+    Toml
 }
 
 impl LapceLanguage {
@@ -31,7 +38,7 @@ impl LapceLanguage {
             // "js" => LapceLanguage::Javascript,
             // "jsx" => LapceLanguage::Javascript,
             "go" => LapceLanguage::Go,
-            // "toml" => LapceLanguage::Toml,
+            "toml" => LapceLanguage::Toml,
             // "yaml" => LapceLanguage::Yaml,
             // "yml" => LapceLanguage::Yaml,
             _ => return None,
@@ -42,6 +49,7 @@ impl LapceLanguage {
         match self {
             LapceLanguage::Rust => tree_sitter_rust::language(),
             LapceLanguage::Go => tree_sitter_go::language(),
+            LapceLanguage::Toml => tree_sitter_toml::language(),
         }
     }
 
@@ -57,6 +65,7 @@ impl LapceLanguage {
         let query = match self {
             LapceLanguage::Rust => tree_sitter_rust::HIGHLIGHT_QUERY,
             LapceLanguage::Go => tree_sitter_go::HIGHLIGHT_QUERY,
+            LapceLanguage::Toml => tree_sitter_toml::HIGHLIGHT_QUERY,
         };
         HighlightConfiguration::new(language, query, "", "")
             .unwrap()
@@ -71,6 +80,7 @@ impl LapceLanguage {
         let (list, ignore_list) = match self {
             LapceLanguage::Rust => (RUST_CODE_LENS_LIST, RUST_CODE_LENS_IGNORE_LIST),
             LapceLanguage::Go => (GO_CODE_LENS_LIST, GO_CODE_LENS_IGNORE_LIST),
+            LapceLanguage::Toml => (TOML_CODE_LENS_LIST, TOML_CODE_LENS_IGNORE_LIST),
         };
         walk_tree(cursor, 0, normal_lines, list, ignore_list);
     }
